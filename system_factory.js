@@ -1,14 +1,11 @@
 // --- System Factory Module ---
-// Dynamically imports and creates instances of different systems
-// NOTE: Dynamic import() usually works better with bundlers or specific server setups.
-// For simple file:// loading, you might need to concatenate files or use classic <script> includes.
-// Let's *try* dynamic import, but provide fallback structure if needed.
-
-// We'll define placeholder classes directly here for simplicity in this example.
-// In a real build, these would be in separate files like `systems/cellular_automata.js`.
+// Import classes from their dedicated files
+import { ConwayLife, BrianBrain } from './systems/cellular_automata.js';
+import { LSystemTree, KochSnowflake } from './systems/l_system.js';
+import { SlimeMold } from './systems/agent_system.js';
 
 // --- Base System Class (Optional but good practice) ---
-class GenerativeSystem {
+export class GenerativeSystem {
     constructor(width, height) {
        this.width = width;
        this.height = height;
@@ -31,6 +28,7 @@ class GenerativeSystem {
    handleMouseUp(x, y) {}
     onResize(newWidth, newHeight){ this.width = newWidth; this.height = newHeight; /* May need grid resize etc */ }
     destroy() { /* Optional cleanup */ }
+    updateRendererBuffer(renderer) { /* Default: do nothing */ }
 }
 
 // --- Placeholder Conway's Life System ---
@@ -276,28 +274,31 @@ class LSystemTree extends GenerativeSystem {
 
 
 // --- Mapping from System ID to Class ---
-// We define this explicitly instead of dynamic import for simple file:// loading
 const systemRegistry = {
-   'ca_life': ConwayLife,
+    'ca_life': ConwayLife,
+    'ca_brain': BrianBrain,          // NEW
     'l_system_tree': LSystemTree,
-   'ca_brain': null, // Placeholder - Brian's Brain CA Class would go here
-    'l_system_koch': null, // Placeholder - Koch Curve L-System Class here
+    'l_system_koch': KochSnowflake,  // NEW
+    'agent_slime': SlimeMold         // NEW
 };
-
 
 // --- Factory Function ---
 export function createSystemInstance(systemId, width, height) {
     const SystemClass = systemRegistry[systemId];
     if (SystemClass) {
         try {
-           return new SystemClass(width, height);
+            console.log(`Creating instance of ${SystemClass.name}...`);
+            const instance = new SystemClass(width, height);
+            // Ensure basic properties are set if not by constructor
+            instance.id = systemId;
+            instance.iteration = instance.iteration || 0;
+            return instance;
         } catch (e) {
-           console.error(`Error constructing system ${systemId}:`, e);
-           return null;
-       }
+            console.error(`Error constructing system ${systemId}:`, e);
+            return null;
+        }
     } else {
         console.warn(`System ID "${systemId}" not found in registry.`);
-        // Maybe return a default/dummy system?
-        return new GenerativeSystem(width, height); // Return base class instance
+        return new GenerativeSystem(width, height);
     }
 }
