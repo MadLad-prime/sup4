@@ -1,5 +1,5 @@
 // --- systems/cellular_automata.js ---
-import { GenerativeSystem } from '../system_factory.js'; // Assuming base class is in factory
+import { GenerativeSystem } from '../base_system.js'; // Updated import
 
 // Helper function for creating grids
 function createGrid(rows, cols, initialValue = 0) {

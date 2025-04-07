@@ -38,12 +38,15 @@
             </section>
 
             <section class="control-section sim-controls">
-                <!-- (Simulation Controls remain the same) -->
-                 <h3>Simulation Control</h3>
-                 <div class="button-group">...</div>
-                 <label for="speed-slider">Speed:</label>
-                 <input type="range" id="speed-slider" min="1" max="60" value="10" step="1">
-                 <span id="speed-value">10 fps</span>
+                <h3>Simulation Control</h3>
+                <div class="button-group">
+                    <button id="play-pause-button"><i class="fas fa-play"></i></button>
+                    <button id="step-button"><i class="fas fa-forward"></i></button>
+                    <button id="reset-button"><i class="fas fa-undo"></i></button>
+                </div>
+                <label for="speed-slider">Speed:</label>
+                <input type="range" id="speed-slider" min="1" max="60" value="10" step="1">
+                <span id="speed-value">10 fps</span>
             </section>
 
              <section id="parameter-controls" class="control-section parameter-controls">

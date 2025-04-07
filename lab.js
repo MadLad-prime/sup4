@@ -1,4 +1,4 @@
-// import CanvasRenderer from './canvas_renderer.js'; // Keep this
+import CanvasRenderer from './canvas_renderer.js'; // Keep this
 import { createSystemInstance } from './system_factory.js'; // This path is fine
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -204,13 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Only step simulation if running and enough time has passed
         if (isRunning && deltaTime >= targetInterval) {
             lastTimestamp = timestamp - (deltaTime % targetInterval); // Adjust timestamp to maintain interval
-            stepSimulation();
+            stepSimulation(); // Ensure the system steps
             requestRedraw(); // Redraw after stepping
         } else if (!isRunning) {
-             // Ensure timestamp is updated even when paused to prevent large jump on resume
-            lastTimestamp = timestamp;
-         }
-        // Rendering happens via requestRedraw or explicit calls
+            lastTimestamp = timestamp; // Prevent large jump on resume
+        }
     }
 
     function stepSimulation() {
@@ -271,10 +269,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Simulation Controls
         playPauseButton.addEventListener('click', () => {
-             isRunning = !isRunning;
-             if(isRunning) lastTimestamp = performance.now(); // Reset timer on play
+            isRunning = !isRunning;
+            if (isRunning) {
+                lastTimestamp = performance.now(); // Reset timer on play
+                startAnimationLoop(); // Ensure the animation loop starts
+            } else {
+                stopAnimationLoop(); // Stop the loop when paused
+            }
             updateUI();
-             console.log(isRunning ? "Simulation Resumed" : "Simulation Paused");
+            console.log(isRunning ? "Simulation Resumed" : "Simulation Paused");
         });
         stepButton.addEventListener('click', () => {
             if (!isRunning) { // Only allow step when paused
