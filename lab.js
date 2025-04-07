@@ -1,4 +1,4 @@
-// import CanvasRenderer from './canvas_renderer.js'; // Keep this
+import CanvasRenderer from './canvas_renderer.js'; // Keep this
 import { createSystemInstance } from './system_factory.js'; // This path is fine
 
 document.addEventListener('DOMContentLoaded', () => {
