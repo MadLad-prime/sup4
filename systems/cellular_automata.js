@@ -1,5 +1,5 @@
 // --- systems/cellular_automata.js ---
-import { GenerativeSystem } from '../base_system.js'; // Updated import
+import { GenerativeSystem } from '../base_system.js'; // Ensure this is the only import
 
 // Helper function for creating grids
 function createGrid(rows, cols, initialValue = 0) {
