@@ -1,0 +1,223 @@
+/* --- Global Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #0a0c10; /* Very dark blue */
+    color: #c3cddc; /* Light grayish blue */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden; /* Prevent body scroll */
+}
+
+/* --- Layout --- */
+.lab-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #12151c; /* Slightly lighter than body bg */
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
+}
+
+.control-panel {
+    width: 320px; /* Fixed width sidebar */
+    height: 100%;
+    background-color: #1c1f2b; /* Dark panel background */
+    border-right: 1px solid #303642;
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Remove padding, handle internally */
+    overflow-y: auto; /* Allow scrolling if controls exceed height */
+    scrollbar-width: thin;
+    scrollbar-color: #555 #2a2d38;
+}
+.control-panel::-webkit-scrollbar { width: 8px; }
+.control-panel::-webkit-scrollbar-track { background: #2a2d38; }
+.control-panel::-webkit-scrollbar-thumb { background-color: #555; border-radius: 4px; }
+
+.simulation-area {
+    flex-grow: 1; /* Take remaining space */
+    position: relative; /* For positioning hint */
+    overflow: hidden; /* Crucial */
+    background-color: #0a0c10; /* Match body */
+    display: flex; /* Center canvas */
+    justify-content: center;
+    align-items: center;
+}
+
+#simulation-canvas {
+    display: block;
+    /* Max width/height to prevent overflow if needed, handled by JS resize */
+    max-width: 100%;
+    max-height: 100%;
+    background-color: transparent; /* Let parent control background */
+    cursor: crosshair; /* Default interaction cursor */
+}
+
+/* --- Control Panel Styling --- */
+.panel-header {
+    padding: 20px 15px;
+    background-color: #2a2d38; /* Header distinct bg */
+    border-bottom: 1px solid #303642;
+}
+.lab-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #00e0ff; /* Bright cyan accent */
+    font-size: 1.6rem;
+    text-align: center;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(0, 224, 255, 0.5);
+}
+.lab-title i { margin-right: 10px;}
+
+.control-section {
+    padding: 18px 15px;
+    border-bottom: 1px solid #2a2d38; /* Separator line */
+}
+.control-section:last-child { border-bottom: none; }
+
+.control-section h3 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #88a0ff; /* Lavender accent for subheadings */
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #303642;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: #9aa8bf; /* Lighter gray label */
+}
+
+select, input[type="range"], input[type="number"], input[type="checkbox"], input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    background-color: #2a2d38; /* Input background */
+    border: 1px solid #444c5a;
+    border-radius: 4px;
+    color: #c3cddc;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+select { cursor: pointer; }
+input[type="checkbox"] { width: auto; margin-right: 8px; vertical-align: middle; }
+input[type="range"] { padding: 0; /* Ranges need specific styling */ cursor: pointer;}
+
+/* Styling range inputs (basic example) */
+input[type=range]::-webkit-slider-thumb { /* Webkit */
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: #58a6ff; cursor: pointer; border-radius: 50%; }
+input[type=range]::-moz-range-thumb { /* Firefox */
+  width: 16px; height: 16px; background: #58a6ff; cursor: pointer; border-radius: 50%; border: none; }
+
+
+/* Parameter Specific Controls Container */
+#dynamic-params {
+    border-left: 3px solid #88a0ff;
+    padding-left: 10px;
+    margin-top: 5px;
+}
+#dynamic-params p { font-size: 0.85rem; font-style: italic; color: #7d8b9f;}
+#dynamic-params label { font-size: 0.8rem; margin-bottom: 4px;}
+#dynamic-params input[type="number"] { padding: 5px; font-size: 0.85rem;}
+#dynamic-params textarea {
+    width: 100%; height: 80px; resize: vertical;
+    padding: 8px; background-color: #2a2d38; border: 1px solid #444c5a; border-radius: 4px; color: #c3cddc; font-family: 'Roboto Mono', monospace; font-size: 0.85rem;
+}
+
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.button-group button {
+    flex-grow: 1; /* Make buttons fill space */
+    padding: 10px;
+    font-size: 1.2rem; /* Larger icons */
+    background-color: #303642;
+    border: 1px solid #555c6a;
+    color: #9aa8bf;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    border-radius: 4px;
+}
+.button-group button:hover, .button-group button:focus {
+    background-color: #444c5a;
+    border-color: #667081;
+    color: #e6edf3;
+    outline: none;
+}
+.button-group button.active { /* Style for Play/Pause state */
+     background-color: #1f6feb; /* Active blue */
+     border-color: #58a6ff;
+     color: white;
+}
+
+/* Visualization Options */
+.viz-option { display: flex; align-items: center; margin-bottom: 8px; }
+.viz-option label { margin-bottom: 0; margin-right: 10px; flex-shrink: 0; /* Prevent label shrinking */}
+.viz-option select, .viz-option input[type="checkbox"] { width: auto; margin-bottom: 0; flex-grow: 1; }
+
+/* Info Display */
+#simulation-info p {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: #9aa8bf;
+    white-space: nowrap; /* Prevent wrapping */
+}
+#simulation-info span {
+    color: #e6edf3; /* Make values stand out */
+    font-weight: 400;
+}
+
+/* Panel Footer */
+.panel-footer {
+    margin-top: auto; /* Push footer to bottom */
+    padding: 15px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #7d8b9f;
+    border-top: 1px solid #2a2d38;
+    background-color: #1c1f2b; /* Match panel bg */
+}
+
+
+/* --- Simulation Area Hints --- */
+.interaction-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(22, 27, 34, 0.8);
+    color: #9aa8bf;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    z-index: 5; /* Above canvas */
+    pointer-events: none; /* Don't block clicks */
+}
+
+
+/* --- Responsive Considerations --- */
+@media (max-width: 768px) {
+    .lab-container { flex-direction: column; }
+    .control-panel {
+        width: 100%;
+        height: 40%; /* Controls take top part */
+        border-right: none;
+        border-bottom: 1px solid #303642;
+        overflow-y: auto; /* Enable scrolling */
+    }
+    .simulation-area { height: 60%; /* Sim takes bottom */ }
+    .lab-title { font-size: 1.3rem;}
+    .control-section { padding: 12px 10px;}
+    .button-group button { padding: 8px; font-size: 1rem; }
+}
